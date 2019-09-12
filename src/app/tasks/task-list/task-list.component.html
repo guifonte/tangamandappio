@@ -1,0 +1,27 @@
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<mat-accordion multi="false" *ngIf="tasks.length > 0 && !isLoading">
+    <mat-expansion-panel *ngFor="let task of tasksCompl">
+        <mat-expansion-panel-header>
+            <div class="vertical-centered"><p>{{ task.task.name }}</p></div>
+            <span class="spacer"></span>
+            <div *ngIf="task.inCharge.id != yourId" class="vez vertical-centered"><p>Vez de {{ task.inCharge.name }}</p></div>
+            <div *ngIf="task.inCharge.id == yourId" class="vez vertical-centered"><p>Sua vez!</p></div>
+            <div *ngIf="task.inCharge.id == yourId" class="vertical-centered">
+                <button mat-raised-button color="accent" (click)="onMakeTask(task.task.id)">Fazer</button>
+            </div>
+        </mat-expansion-panel-header>
+        <p>{{ task.task.description }}</p>
+        <mat-list>
+            <mat-list-item *ngFor="let member of task.task.members">
+                <mat-card class="member-card in-charge" *ngIf='member.userId == task.inCharge.id'>{{ member.firstName }} {{ member.lastName}}</mat-card>
+                <mat-card class="member-card" *ngIf='member.userId != task.inCharge.id'>{{ member.firstName }} {{ member.lastName}}</mat-card>
+            </mat-list-item>
+        </mat-list>
+        <mat-action-row *ngIf="userIsAdmin">
+            <a mat-button color="primary" [routerLink]="['/tasks/edit', task.task.id]">EDITAR</a>
+            <button mat-button color="accent" (click)="onDelete(task.task.id)">REMOVER</button>
+        </mat-action-row>
+        
+    </mat-expansion-panel>
+</mat-accordion>
+<p class="info-text mat-body-1" *ngIf="tasks.length <= 0 && !isLoading"> Sem tarefas no momento!</p>

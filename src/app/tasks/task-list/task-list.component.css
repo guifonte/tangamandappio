@@ -1,0 +1,53 @@
+:host {
+    display: block;
+    margin-top: 1rem;
+}
+
+.info-text {
+    text-align: center
+}
+
+mat-spinner {
+    margin: auto;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.vez{
+    margin-right: 1rem
+}
+
+button{
+    margin-right: 1rem;
+    height: 70%;
+}
+
+.member-card{
+    width: 80%;
+    text-align: center;
+}
+
+.in-charge{
+    background: #eca1a6;
+}
+
+.your-card{
+    background: #82b74b;
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.main-div{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

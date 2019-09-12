@@ -1,0 +1,13 @@
+table {
+    width: 100%;
+  }
+
+button {
+  margin-top: 1rem;
+  float: right;
+}
+
+mat-spinner {
+  margin: auto;
+  display: block;
+}

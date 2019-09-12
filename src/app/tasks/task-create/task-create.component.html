@@ -1,0 +1,50 @@
+<mat-card>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <form (submit)="onSaveTask(taskForm)" #taskForm="ngForm" id="taskForm" *ngIf="!isLoading">
+        <mat-form-field>
+            <input 
+                matInput
+                type="text" 
+                name="name" 
+                [ngModel]="task?.name"
+                required
+                minlength="3"
+                placeholder="Nome da Tarefa Rotativa"
+                #name="ngModel">
+                <mat-error *ngIf="name.invalid">Entre por favor um nome para a tarefa rotativa</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <textarea 
+                matInput 
+                rows="6" 
+                name="description" 
+                [ngModel]="task?.description"
+                required
+                placeholder="Descrição"
+                #description="ngModel">
+            </textarea>
+            <mat-error *ngIf="description.invalid">Coloque uma descrição para a tarefa rotativa</mat-error>
+        </mat-form-field>
+    </form>
+        <table *ngIf ="!isLoading" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            
+                <ng-container matColumnDef="selected">
+                    <th mat-header-cell *matHeaderCellDef> </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-checkbox [(ngModel)]="element.selected"></mat-checkbox>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="firstName">
+                    <th mat-header-cell *matHeaderCellDef> Nome </th>
+                    <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+                </ng-container>
+                <ng-container matColumnDef="lastName">
+                    <th mat-header-cell *matHeaderCellDef> Sobrenome </th>
+                    <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+                </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    <button mat-raised-button color="accent" type="submit" form="taskForm">Salvar Tarefa Rotativa</button>
+    
+</mat-card>
