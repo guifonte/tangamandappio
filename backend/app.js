@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const tasksRoutes = require('./routes/tasks')
 const userRoutes = require('./routes/user')
@@ -27,8 +28,9 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/", express.static(path.join(__dirname, "angular")))
 
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader(
         "Access-Control-Allow-Headers",
@@ -39,9 +41,12 @@ app.use((req, res, next) => {
         "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     );
     next();
-})
+}) */
 
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/user", userRoutes);
+app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, "angular", "index.html"));
+});
 
 module.exports = app;
