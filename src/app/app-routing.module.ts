@@ -7,13 +7,19 @@ import { TaskCreateComponent } from './tasks/task-create/task-create.component';
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './auth/auth.guard';
 import { WaitComponent } from './wait/wait.component';
+import { LoginComponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
+import { UsersComponent } from './auth/users/users.component';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'wait', component: WaitComponent },
     { path: 'tasks', component: TaskListComponent, canActivate: [AuthGuard] },
     { path: 'tasks/create', component: TaskCreateComponent, canActivate: [AuthGuard] },
-    { path: 'tasks/edit/:taskId', component: TaskCreateComponent, canActivate: [AuthGuard] }
+    { path: 'tasks/edit/:taskId', component: TaskCreateComponent, canActivate: [AuthGuard] },
+    { path: 'login', component: LoginComponent },
+    { path: 'signup', component: SignupComponent },
+    { path: 'users', component: UsersComponent}
 ];
 
 @NgModule({
