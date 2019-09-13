@@ -1,22 +1,51 @@
-<mat-toolbar color="primary">
-    <span *ngIf="!userIsAuthenticated || !userIsAuthorized"><a routerLink="/">Tangamandapp.io</a></span>
-    <span *ngIf="userIsAuthenticated && userIsAuthorized"><a routerLink="/tasks">Tangamandapp.io</a></span>
-    <span class="spacer"></span>
-    <ul>
-        <li *ngIf="userIsAuthenticated && userIsAdmin">
-            <a mat-button routerLink="/tasks/create" routerLinkActive="mat-accent">Criar Tarefa</a>
-        </li>
-        <li *ngIf="userIsAdmin">
-            <a mat-button routerLink="/users" routerLinkActive="mat-accent">Usuários</a>
-        </li>
-        <li *ngIf="!userIsAuthenticated">
-            <a mat-button routerLink="/login" routerLinkActive="mat-accent">Entrar</a>
-        </li>
-        <li *ngIf="!userIsAuthenticated">
-            <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
-        </li>
-        <li *ngIf="userIsAuthenticated">
-            <button mat-button (click)="onLogout()">Sair</button>
-        </li>
-    </ul>
-</mat-toolbar>
+<mat-sidenav-container>
+    <mat-sidenav #sidenav mode="over">
+        <mat-nav-list>
+            <ul>
+                <li *ngIf="userIsAuthenticated && userIsAdmin">
+                    <a mat-button routerLink="/tasks/create" routerLinkActive="mat-accent">Criar Tarefa</a>
+                </li>
+                <li *ngIf="userIsAdmin">
+                    <a mat-button routerLink="/users" routerLinkActive="mat-accent">Usuários</a>
+                </li>
+                <li *ngIf="!userIsAuthenticated">
+                    <a mat-button routerLink="/login" routerLinkActive="mat-accent">Entrar</a>
+                </li>
+                <li *ngIf="!userIsAuthenticated">
+                    <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
+                </li>
+                <li *ngIf="userIsAuthenticated">
+                    <button mat-button (click)="onLogout()">Sair</button>
+                </li>
+            </ul>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-toolbar color="primary">
+        <mat-toolbar-row>
+            <button mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span *ngIf="!userIsAuthenticated || !userIsAuthorized"><a routerLink="/">Tangamandapp.io</a></span>
+            <span *ngIf="userIsAuthenticated && userIsAuthorized"><a routerLink="/tasks">Tangamandapp.io</a></span>
+            <span class="spacer"></span>
+            <ul>
+                <li *ngIf="userIsAuthenticated && userIsAdmin">
+                    <a mat-button routerLink="/tasks/create" routerLinkActive="mat-accent">Criar Tarefa</a>
+                </li>
+                <li *ngIf="userIsAdmin">
+                    <a mat-button routerLink="/users" routerLinkActive="mat-accent">Usuários</a>
+                </li>
+                <li *ngIf="!userIsAuthenticated">
+                    <a mat-button routerLink="/login" routerLinkActive="mat-accent">Entrar</a>
+                </li>
+                <li *ngIf="!userIsAuthenticated">
+                    <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
+                </li>
+                <li *ngIf="userIsAuthenticated">
+                    <button mat-button (click)="onLogout()">Sair</button>
+                </li>
+            </ul>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+</mat-sidenav-container>
