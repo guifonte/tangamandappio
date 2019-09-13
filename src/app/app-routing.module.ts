@@ -13,8 +13,7 @@ const routes: Routes = [
     { path: 'wait', component: WaitComponent },
     { path: 'tasks', component: TaskListComponent, canActivate: [AuthGuard] },
     { path: 'tasks/create', component: TaskCreateComponent, canActivate: [AuthGuard] },
-    { path: 'tasks/edit/:taskId', component: TaskCreateComponent, canActivate: [AuthGuard] },
-    { path: 'auth', loadChildren: "./auth/auth.module#AuthModule"}
+    { path: 'tasks/edit/:taskId', component: TaskCreateComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

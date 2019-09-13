@@ -7,13 +7,13 @@
             <a mat-button routerLink="/tasks/create" routerLinkActive="mat-accent">Criar Tarefa</a>
         </li>
         <li *ngIf="userIsAdmin">
-            <a mat-button routerLink="/auth/users" routerLinkActive="mat-accent">Usuários</a>
+            <a mat-button routerLink="/users" routerLinkActive="mat-accent">Usuários</a>
         </li>
         <li *ngIf="!userIsAuthenticated">
-            <a mat-button routerLink="/auth/login" routerLinkActive="mat-accent">Entrar</a>
+            <a mat-button routerLink="/login" routerLinkActive="mat-accent">Entrar</a>
         </li>
         <li *ngIf="!userIsAuthenticated">
-            <a mat-button routerLink="/auth/signup" routerLinkActive="mat-accent">Registrar</a>
+            <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
         </li>
         <li *ngIf="userIsAuthenticated">
             <button mat-button (click)="onLogout()">Sair</button>
