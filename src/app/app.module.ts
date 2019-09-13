@@ -13,6 +13,7 @@ import { ErrorComponent } from './error/error.component';
 import { AngularMaterialModule } from './angular-material.module';
 import { TaskModule } from './tasks/task.module';
 import { WaitComponent } from './wait/wait.component';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { WaitComponent } from './wait/wait.component';
     BrowserAnimationsModule,
     HttpClientModule,
     AngularMaterialModule,
-    TaskModule
+    TaskModule,
+    AuthModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
