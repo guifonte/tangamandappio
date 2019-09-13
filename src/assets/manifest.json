@@ -1,6 +1,6 @@
 {
-    "name": "tangamandappio",
-    "short_name": "Tangamandappio",
+    "name": "Tangamandappio",
+    "short_name": "tangamandappio",
     "start_url": "/index.html",
     "scope": ".",
     "display": "standalone",
