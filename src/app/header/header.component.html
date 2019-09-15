@@ -3,10 +3,10 @@
     <span *ngIf="userIsAuthenticated && userIsAuthorized"><a routerLink="/tasks">Tangamandapp.io</a></span>
     <span class="spacer"></span>
     <ul>
-        <li *ngIf="userIsAuthenticated && userIsAdmin">
+        <li *ngIf="userIsAuthenticated && userIsAdmin && adminMode">
             <a mat-button routerLink="/tasks/create" routerLinkActive="mat-accent">Criar Tarefa</a>
         </li>
-        <li *ngIf="userIsAdmin">
+        <li *ngIf="userIsAuthenticated && userIsAdmin && adminMode">
             <a mat-button routerLink="/auth/users" routerLinkActive="mat-accent">Usuários</a>
         </li>
         <li *ngIf="!userIsAuthenticated">
@@ -14,6 +14,9 @@
         </li>
         <li *ngIf="!userIsAuthenticated">
             <a mat-button routerLink="/auth/signup" routerLinkActive="mat-accent">Registrar</a>
+        </li>
+        <li *ngIf="userIsAdmin">
+            <button mat-button (click)="onToggleAdminMode()" [ngClass]="{'adminStyleMode': adminMode}">Modo Admin</button>
         </li>
         <li *ngIf="userIsAuthenticated">
             <button mat-button (click)="onLogout()">Sair</button>

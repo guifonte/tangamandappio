@@ -14,6 +14,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     userIsAuthorized;
     userIsAdmin;
     userFirstName;
+    adminMode = false;
     private authListenerSubs: Subscription;
     private authorizedListenerSubs: Subscription;
     private adminListenerSubs: Subscription;
@@ -41,6 +42,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.userIsAdmin = isAdmin;
           })
       }
+    
+    onToggleAdminMode() {
+      this.adminMode = !this.adminMode;
+    }
 
     onLogout() {
     this.authService.logout();
