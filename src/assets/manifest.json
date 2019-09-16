@@ -2,7 +2,7 @@
     "name": "Tangamandappio",
     "short_name": "Tangamandappio",
     "start_url": "/index.html",
-    "scope": ".",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#fff",
     "description": "O App da República Tangamandápio",

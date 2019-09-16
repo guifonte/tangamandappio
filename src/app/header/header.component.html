@@ -7,10 +7,11 @@
     <span class="spacer"></span>
     <ul>
         <li *ngIf="userIsAuthenticated && userIsAdmin">
-            <button mat-button [matMenuTriggerFor]="adminMenu" [ngClass]="{'adminStyleMode': adminMode}">Admin</button>
+            <button mat-button [matMenuTriggerFor]="adminMenu" [ngClass]="{'adminStyleMode': adminMode}">Admin<mat-icon>keyboard_arrow_down</mat-icon></button>
             <mat-menu #adminMenu>
                 <a mat-menu-item routerLink="/tasks/create" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Criar Tarefa</a>
                 <a mat-menu-item routerLink="/users" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Usuários</a>
+                <mat-divider *ngIf="adminMode"></mat-divider>
                 <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="!adminMode">Ligar Modo Admin</button>
                 <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="adminMode">Desligar Modo Admin</button>
             </mat-menu>
@@ -22,7 +23,14 @@
             <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
         </li>
         <li *ngIf="userIsAuthenticated">
-            <button mat-button (click)="onLogout()">Sair</button>
+            <button mat-button [matMenuTriggerFor]="accountMenu">Conta<mat-icon>keyboard_arrow_down</mat-icon></button>
+            <mat-menu #accountMenu>
+                <p class="email-span">{{ userEmail }}</p>
+                <mat-divider></mat-divider>
+                <button mat-menu-item class="menu-item">Configurações da Conta</button>
+                <mat-divider></mat-divider>
+                <button mat-menu-item (click)="onLogout()" class="menu-item">Sair</button>
+            </mat-menu>
         </li>
     </ul>
 </mat-toolbar>

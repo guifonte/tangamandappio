@@ -15,17 +15,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     userIsAuthorized;
     userIsAdmin;
     userFirstName;
+    userEmail;
     adminMode = false;
     private authListenerSubs: Subscription;
     private authorizedListenerSubs: Subscription;
     private adminListenerSubs: Subscription;
     private adminModeSubs: Subscription;
+    private emailListenerSubs: Subscription;
 
     constructor(private authService: AuthService, private headerService: HeaderService) {}
 
     ngOnInit() {
         this.userIsAuthenticated = this.authService.getIsAuth();
         this.userFirstName = this.authService.getUserFirstName();
+        this.userEmail = this.authService.getUserEmail();
         this.userIsAuthorized = this.authService.getIsAuthorized();
         this.userIsAdmin = this.authService.getIsAdmin();
         this.adminMode = this.headerService.getAdminMode();
@@ -50,6 +53,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
           .subscribe(adminModeStatus => {
               this.adminMode = adminModeStatus;
           })
+        this.emailListenerSubs = this.authService
+          .getEmailListener()
+          .subscribe(email => {
+            this.userEmail = email;
+          })
       }
     
     onToggleAdminMode() {
@@ -61,8 +69,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-    this.authService.getAuthStatusListener().unsubscribe();
-    this.authService.getAuthorizedStatusListener().unsubscribe();
-    this.authService.getAdminStatusListener().unsubscribe();
+    this.authListenerSubs.unsubscribe();
+    this.authorizedListenerSubs.unsubscribe();
+    this.adminListenerSubs.unsubscribe();
+    this.adminModeSubs.unsubscribe();
+    this.emailListenerSubs.unsubscribe();
     }
 }

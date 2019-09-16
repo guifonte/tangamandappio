@@ -24,6 +24,7 @@ export class AuthService {
   private authStatusListener = new Subject<boolean>();
   private authorizedStatusListener = new Subject<boolean>();
   private adminStatusListener = new Subject<boolean>();
+  private emailListener = new Subject<string>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -33,6 +34,10 @@ export class AuthService {
 
   getUserLastName() {
     return this.lastName;
+  }
+
+  getUserEmail() {
+    return this.email;
   }
 
   getUserId() {
@@ -59,6 +64,9 @@ export class AuthService {
   }
   getAdminStatusListener() {
     return this.adminStatusListener;
+  }
+  getEmailListener() {
+    return this.emailListener;
   }
 
   createUser(email: string, password: string, firstName: string, lastName: string) {
@@ -115,6 +123,7 @@ export class AuthService {
       userId: string,
       firstName: string,
       lastName: string,
+      email: string,
       admin: boolean,
       authorized: boolean}>(
         BACKEND_URL + 'login',
@@ -132,14 +141,16 @@ export class AuthService {
           this.userId = response.userId;
           this.firstName = response.firstName;
           this.lastName = response.lastName;
+          this.email = response.email;
           this.authStatusListener.next(true);
           if (this.isAdmin == true) this.adminStatusListener.next(true)
           else this.adminStatusListener.next(false)
           if (this.isAuthorized == true ) this.authorizedStatusListener.next(true)
           else this.authorizedStatusListener.next(false)
+          this.emailListener.next(this.email)
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-          const user: UserData = { userId: this.userId, firstName: this.firstName, lastName: this.lastName, email: null, admin: this.isAdmin, authorized: this.isAuthorized};
+          const user: UserData = { userId: this.userId, firstName: this.firstName, lastName: this.lastName, email: this.email, admin: this.isAdmin, authorized: this.isAuthorized};
           this.saveAuthData(token, expirationDate, user);
           this.router.navigate(['/tasks']);
         }
@@ -163,6 +174,7 @@ export class AuthService {
       this.userId = authInformation.userId;
       this.firstName = authInformation.firstName;
       this.lastName = authInformation.lastName;
+      this.email = authInformation.email;
       this.setAuthTimer(expiresIn / 1000);
       this.authStatusListener.next(true);
       if (this.isAdmin == true) this.adminStatusListener.next(true)
@@ -197,6 +209,7 @@ export class AuthService {
     localStorage.setItem('userId', user.userId);
     localStorage.setItem('firstName', user.firstName);
     localStorage.setItem('lastName', user.lastName);
+    localStorage.setItem('email', user.email);
     localStorage.setItem('admin', String(user.admin));
     localStorage.setItem('authorized', String(user.authorized));
   }
@@ -207,6 +220,7 @@ export class AuthService {
     localStorage.removeItem('userId');
     localStorage.removeItem('firstName');
     localStorage.removeItem('lastName');
+    localStorage.removeItem('email');
     localStorage.removeItem('admin');
     localStorage.removeItem('authorized');
   }
@@ -217,6 +231,7 @@ export class AuthService {
     const userId = localStorage.getItem('userId');
     const firstName = localStorage.getItem('firstName');
     const lastName = localStorage.getItem('lastName');
+    const email = localStorage.getItem('email');
     const admin = (localStorage.getItem('admin') == 'true');
     const authorized = (localStorage.getItem('authorized') == 'true');
     if (!token || !expirationDate) {
@@ -228,6 +243,7 @@ export class AuthService {
       userId: userId,
       firstName: firstName,
       lastName: lastName,
+      email: email,
       admin: admin,
       authorized: authorized
     };

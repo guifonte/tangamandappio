@@ -40,7 +40,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.isLoading = true;
         this.adminMode = this.headerService.getAdminMode();
-        console.log(this.adminMode)
         this.userIsAuthenticated = this.authService.getIsAuth();
         this.userIsAdmin = this.authService.getIsAdmin();
         this.yourId = this.authService.getUserId()

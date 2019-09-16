@@ -30,3 +30,8 @@ button {
 .adminStyleMode {
     color: red;
 }
+
+.email-span {
+    margin: 1rem;
+    color: gray;
+}
