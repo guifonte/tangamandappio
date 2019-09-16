@@ -1,11 +1,11 @@
 {
     "name": "Tangamandappio",
-    "short_name": "tangamandappio",
+    "short_name": "Tangamandappio",
     "start_url": "/index.html",
     "scope": ".",
     "display": "standalone",
     "background_color": "#fff",
-    "description": "O App da Republica Tangamandapio",
+    "description": "O App da República Tangamandápio",
     "dir": "ltr",
     "lang": "pt-BR",
     "orientation": "portrait-primary",
