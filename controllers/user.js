@@ -12,6 +12,7 @@ exports.createUser = (req, res, next) => {
           password: hash,
           firstName: req.body.firstName,
           lastName: req.body.lastName,
+          nickname: req.body.nickname,
           admin: false,
           authorized: false
         });
@@ -54,6 +55,7 @@ exports.userLogin = (req, res, next) => {
             userId: fetchedUser._id,
             firstName: fetchedUser.firstName,
             lastName: fetchedUser.lastName,
+            nickname: fetchedUser.nickname,
             admin: fetchedUser.admin,
             authorized: fetchedUser.authorized
           },
@@ -66,6 +68,7 @@ exports.userLogin = (req, res, next) => {
           userId: fetchedUser._id,
           firstName: fetchedUser.firstName,
           lastName: fetchedUser.lastName,
+          nickname: fetchedUser.nickname,
           email: fetchedUser.email,
           admin: fetchedUser.admin,
           authorized: fetchedUser.authorized
@@ -85,6 +88,7 @@ exports.getUserInfoByEmail = (req, res, next) => {
           userId: user._id,
           firstName: user.firstName,
           lastName: user.lastName,
+          nickname: user.nickname,
           email: user.email,
           admin: user.admin,
           authorized: user.authorized
@@ -96,7 +100,7 @@ exports.getUserInfoByEmail = (req, res, next) => {
   }
 
 exports.getUsers = (req, res, next) => {
-  User.find({},'_id firstName lastName email authorized admin').then(users => {
+  User.find({},'_id firstName lastName nickname email authorized admin').then(users => {
     if(users) {
       res.status(200).json({
         message: "Usuários obtidos com sucesso",
@@ -109,7 +113,7 @@ exports.getUsers = (req, res, next) => {
 }
 
 exports.getAuthorizedUsers = (req, res, next) => {
-  User.find({authorized: true},'_id firstName lastName').then(users => {
+  User.find({authorized: true},'_id firstName lastName nickname').then(users => {
     if(users) {
       res.status(200).json({
         message: "Usuários obtidos com sucesso",
