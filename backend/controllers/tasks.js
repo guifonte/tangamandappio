@@ -29,8 +29,7 @@ exports.createTask = (req, res, next) => {
             membersData = result.map(user => {
                 return {
                     userId: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    nickname: user.nickname,
                     position: members.find(member => { return member.userId == user._id }).position
                 }
             })
@@ -87,8 +86,7 @@ exports.getTasks = (req, res, next) => {
                         })
                         return {
                             userId: user._id,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
+                            nickname: user.nickname,
                             position: foundMember.position
                         }
                     })

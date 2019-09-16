@@ -4,7 +4,7 @@
         <mat-expansion-panel-header>
             <div class="vertical-centered"><p>{{ task.task.name }}</p></div>
             <span class="spacer"></span>
-            <div *ngIf="task.inCharge.id != yourId" class="vez vertical-centered"><p>Vez de {{ task.inCharge.name }}</p></div>
+            <div *ngIf="task.inCharge.id != yourId" class="vez vertical-centered"><p>Vez de {{ task.inCharge.nickname }}</p></div>
             <div *ngIf="task.inCharge.id == yourId" class="vez vertical-centered"><p>Sua vez!</p></div>
             <div *ngIf="task.inCharge.id == yourId" class="vertical-centered">
                 <button mat-raised-button color="accent" (click)="onMakeTask(task.task.id)">Fazer</button>
@@ -14,12 +14,12 @@
         <mat-list>
             <mat-list-item *ngFor="let member of task.task.members">
                 <mat-card class="member-card in-charge" *ngIf='member.userId == task.inCharge.id'>
-                    {{ member.firstName }} {{ member.lastName}}
+                    {{ member.nickname }}
                     <span class="spacer"></span>
                     <button mat-button color="primary" *ngIf="userIsAdmin && adminMode">FAZER</button>
                 </mat-card>
                 <mat-card class="member-card" *ngIf='member.userId != task.inCharge.id'>
-                    {{ member.firstName }} {{ member.lastName}}
+                    {{ member.nickname }}
                     <span class="spacer"></span>
                     <button mat-button color="primary" *ngIf="userIsAdmin && adminMode" >FAZER</button>
                 </mat-card>

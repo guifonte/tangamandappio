@@ -20,7 +20,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
         { title: 'Lixo', description: 'Não é sua vez!' }
     ]; */
     tasks: Task[] = [];
-    tasksCompl: {task: Task, inCharge: {id: string, name: string}}[]
+    tasksCompl: {task: Task, inCharge: {id: string, nickname: string}}[]
     isLoading = false;
     userIsAuthenticated = false;
     userIsAdmin = false;
@@ -54,7 +54,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
                         task: task,
                         inCharge: {
                             id: task.inCharge,
-                            name: inChargeMember.firstName + ' ' + inChargeMember.lastName
+                            nickname: inChargeMember.nickname
                         }
                     }
                 })
@@ -90,5 +90,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.tasksSub.unsubscribe();
+        this.authStatusSub.unsubscribe();
+        this.adminStatusSub.unsubscribe();
+        this.adminModeSub.unsubscribe();
     }
 }

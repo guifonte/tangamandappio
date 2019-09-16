@@ -20,6 +20,7 @@ export class AuthService {
   private userId: string;
   private firstName: string;
   private lastName: string;
+  private nickname: string;
   private email: string;
   private authStatusListener = new Subject<boolean>();
   private authorizedStatusListener = new Subject<boolean>();
@@ -34,6 +35,10 @@ export class AuthService {
 
   getUserLastName() {
     return this.lastName;
+  }
+
+  getUserNickname() {
+    return this.nickname;
   }
 
   getUserEmail() {
@@ -69,8 +74,8 @@ export class AuthService {
     return this.emailListener;
   }
 
-  createUser(email: string, password: string, firstName: string, lastName: string) {
-    const authData: AuthData = { email: email, password: password, firstName: firstName, lastName: lastName};
+  createUser(email: string, password: string, firstName: string, lastName: string, nickname: string) {
+    const authData: AuthData = { email: email, password: password, firstName: firstName, lastName: lastName, nickname: nickname};
     this.http
       .post(BACKEND_URL + 'signup', authData)
       .subscribe(() => {
@@ -88,6 +93,7 @@ export class AuthService {
             id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
+            nickname: user.nickname,
             admin: user.admin,
             authorized: user.authorized,
             email: user.email
@@ -103,7 +109,8 @@ export class AuthService {
           return {
             id: user._id,
             firstName: user.firstName,
-            lastName: user.lastName
+            lastName: user.lastName,
+            nickname: user.nickname
           };
         });
       } ));
@@ -116,13 +123,14 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    const authData: AuthData = { email: email, password: password, firstName: null, lastName: null};
+    const authData: AuthData = { email: email, password: password, firstName: null, lastName: null, nickname: null};
     this.http.post<{
       token: string,
       expiresIn: number,
       userId: string,
       firstName: string,
       lastName: string,
+      nickname: string,
       email: string,
       admin: boolean,
       authorized: boolean}>(
@@ -141,6 +149,7 @@ export class AuthService {
           this.userId = response.userId;
           this.firstName = response.firstName;
           this.lastName = response.lastName;
+          this.nickname = response.nickname;
           this.email = response.email;
           this.authStatusListener.next(true);
           if (this.isAdmin == true) this.adminStatusListener.next(true)
@@ -150,7 +159,7 @@ export class AuthService {
           this.emailListener.next(this.email)
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-          const user: UserData = { userId: this.userId, firstName: this.firstName, lastName: this.lastName, email: this.email, admin: this.isAdmin, authorized: this.isAuthorized};
+          const user: UserData = { userId: this.userId, firstName: this.firstName, lastName: this.lastName, nickname: this.nickname, email: this.email, admin: this.isAdmin, authorized: this.isAuthorized};
           this.saveAuthData(token, expirationDate, user);
           this.router.navigate(['/tasks']);
         }
@@ -174,6 +183,7 @@ export class AuthService {
       this.userId = authInformation.userId;
       this.firstName = authInformation.firstName;
       this.lastName = authInformation.lastName;
+      this.nickname = authInformation.nickname;
       this.email = authInformation.email;
       this.setAuthTimer(expiresIn / 1000);
       this.authStatusListener.next(true);
@@ -209,6 +219,7 @@ export class AuthService {
     localStorage.setItem('userId', user.userId);
     localStorage.setItem('firstName', user.firstName);
     localStorage.setItem('lastName', user.lastName);
+    localStorage.setItem('nickname', user.nickname);
     localStorage.setItem('email', user.email);
     localStorage.setItem('admin', String(user.admin));
     localStorage.setItem('authorized', String(user.authorized));
@@ -220,6 +231,7 @@ export class AuthService {
     localStorage.removeItem('userId');
     localStorage.removeItem('firstName');
     localStorage.removeItem('lastName');
+    localStorage.removeItem('nickname');
     localStorage.removeItem('email');
     localStorage.removeItem('admin');
     localStorage.removeItem('authorized');
@@ -231,6 +243,7 @@ export class AuthService {
     const userId = localStorage.getItem('userId');
     const firstName = localStorage.getItem('firstName');
     const lastName = localStorage.getItem('lastName');
+    const nickname = localStorage.getItem('nickname');
     const email = localStorage.getItem('email');
     const admin = (localStorage.getItem('admin') == 'true');
     const authorized = (localStorage.getItem('authorized') == 'true');
@@ -243,6 +256,7 @@ export class AuthService {
       userId: userId,
       firstName: firstName,
       lastName: lastName,
+      nickname: nickname,
       email: email,
       admin: admin,
       authorized: authorized

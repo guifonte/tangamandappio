@@ -48,6 +48,18 @@
         #lastName="ngModel">
       <mat-error *ngIf="lastName.invalid">Insira o seu sobrenome</mat-error>
     </mat-form-field>
+    <mat-form-field>
+        <input
+          matInput
+          type="text"
+          name="nickname"
+          required
+          ngModel
+          text
+          placeholder="Apelido"
+          #nickname="ngModel">
+        <mat-error *ngIf="nickname.invalid">Insira o seu apelido</mat-error>
+      </mat-form-field>
     <button
       mat-raised-button
       *ngIf="!isLoading"
