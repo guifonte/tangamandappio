@@ -98,10 +98,13 @@ export class TasksService {
     makeTask(taskId: string) {
         this.http.post<{message: string, inCharge: string}>(BACKEND_URL + "make/", {id: taskId})
             .subscribe((responseData) => {
-                let task = this.tasks.filter(task => task.id == taskId)[0]
-                task.inCharge = responseData.inCharge;
-                const updatedTasks = this.tasks.filter(task => task.id !== taskId)
-                updatedTasks.push(task)
+                const updatedTasks = [...this.tasks];
+                const oldTaskIndex = updatedTasks.findIndex(t => t.id === taskId);
+                updatedTasks[oldTaskIndex].inCharge = responseData.inCharge;
+                //let task = this.tasks.filter(task => task.id == taskId)[0]
+                //task.inCharge = responseData.inCharge;
+                //const updatedTasks = this.tasks.filter(task => task.id !== taskId)
+                //updatedTasks.push(task)
                 this.tasks = updatedTasks
                 this.tasksUpdated.next([...this.tasks])
                 console.log('Task made!')

@@ -5,6 +5,7 @@ import { Task } from '../task.model';
 import { TasksService } from '../task.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { UserData } from 'src/app/auth/user-data.model';
+import { HeaderService } from 'src/app/header/header.service';
 
 @Component({
     selector: 'app-task-list',
@@ -23,16 +24,28 @@ export class TaskListComponent implements OnInit, OnDestroy {
     isLoading = false;
     userIsAuthenticated = false;
     userIsAdmin = false;
+    adminMode = false;
     yourId;
 
     private tasksSub: Subscription;
     private authStatusSub: Subscription;
     private adminStatusSub: Subscription;
-    constructor(public tasksService: TasksService, private authService: AuthService) {}
+    private adminModeSub: Subscription;
+
+    constructor(
+        public tasksService: TasksService,
+        private authService: AuthService, 
+        public headerService: HeaderService) {}
 
     ngOnInit() {
         this.isLoading = true;
+        this.adminMode = this.headerService.getAdminMode();
+        console.log(this.adminMode)
+        this.userIsAuthenticated = this.authService.getIsAuth();
+        this.userIsAdmin = this.authService.getIsAdmin();
+        this.yourId = this.authService.getUserId()
         this.tasksService.getTasks();
+
         this.tasksSub = this.tasksService.getTaskUpdateListener()
             .subscribe((tasks: any[]) => {
                 this.tasks = tasks;
@@ -48,19 +61,24 @@ export class TaskListComponent implements OnInit, OnDestroy {
                 })
                 this.isLoading = false;
         });
-        this.userIsAuthenticated = this.authService.getIsAuth();
+
         this.authStatusSub = this.authService
             .getAuthStatusListener()
             .subscribe(isAuthenticated => {
                 this.userIsAuthenticated = isAuthenticated;
             });
-        this.userIsAdmin = this.authService.getIsAdmin();
+
         this.adminStatusSub = this.authService
         .getAdminStatusListener()
         .subscribe(isAdmin => {
             this.userIsAdmin = isAdmin;
         });
-        this.yourId = this.authService.getUserId()
+
+        this.adminModeSub = this.headerService
+            .getAdminModeStatusListener()
+            .subscribe(adminModeStatus => {
+                this.adminMode = adminModeStatus;
+            })
     }
 
     onMakeTask(taskId: string) {

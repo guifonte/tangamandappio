@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
+import { HeaderService } from './header.service';
 
 @Component({
     selector:"app-header",
@@ -18,13 +19,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authListenerSubs: Subscription;
     private authorizedListenerSubs: Subscription;
     private adminListenerSubs: Subscription;
-    constructor(private authService: AuthService) {}
+    private adminModeSubs: Subscription;
+
+    constructor(private authService: AuthService, private headerService: HeaderService) {}
 
     ngOnInit() {
         this.userIsAuthenticated = this.authService.getIsAuth();
         this.userFirstName = this.authService.getUserFirstName();
         this.userIsAuthorized = this.authService.getIsAuthorized();
         this.userIsAdmin = this.authService.getIsAdmin();
+        this.adminMode = this.headerService.getAdminMode();
         this.authListenerSubs = this.authService
           .getAuthStatusListener()
           .subscribe(isAuthenticated => {
@@ -41,10 +45,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
           .subscribe(isAdmin => {
             this.userIsAdmin = isAdmin;
           })
+        this.adminModeSubs = this.headerService
+          .getAdminModeStatusListener()
+          .subscribe(adminModeStatus => {
+              this.adminMode = adminModeStatus;
+          })
       }
     
     onToggleAdminMode() {
-      this.adminMode = !this.adminMode;
+      this.headerService.toggleAdminMode();
     }
 
     onLogout() {

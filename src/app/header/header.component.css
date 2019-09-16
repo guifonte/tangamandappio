@@ -22,6 +22,11 @@ button {
     color: white;
 }
 
+.menu-item {
+    text-decoration: none;
+    color: black;
+}
+
 .adminStyleMode {
     color: red;
 }

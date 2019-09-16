@@ -26,7 +26,12 @@ button{
 
 .member-card{
     width: 80%;
-    text-align: center;
+    text-align: left;
+    display: flex;
+}
+
+.spacer {
+    flex: 1 1 auto;
 }
 
 .in-charge{

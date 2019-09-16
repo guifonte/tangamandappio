@@ -1,22 +1,25 @@
 <mat-toolbar color="primary">
-    <span *ngIf="!userIsAuthenticated || !userIsAuthorized"><a routerLink="/">Tangamandapp.io</a></span>
-    <span *ngIf="userIsAuthenticated && userIsAuthorized"><a routerLink="/tasks">Tangamandapp.io</a></span>
+    <a routerLink="/tasks">
+    <img src="/assets/icons/tanga-icon-48x48.png">
+    </a>
+    <span *ngIf="!userIsAuthenticated || !userIsAuthorized"><a routerLink="/">Tangamandappio</a></span>
+    <span *ngIf="userIsAuthenticated && userIsAuthorized"><a routerLink="/tasks">Tangamandappio</a></span>
     <span class="spacer"></span>
     <ul>
-        <li *ngIf="userIsAuthenticated && userIsAdmin && adminMode">
-            <a mat-button routerLink="/tasks/create" routerLinkActive="mat-accent">Criar Tarefa</a>
-        </li>
-        <li *ngIf="userIsAuthenticated && userIsAdmin && adminMode">
-            <a mat-button routerLink="/users" routerLinkActive="mat-accent">Usuários</a>
+        <li *ngIf="userIsAuthenticated && userIsAdmin">
+            <button mat-button [matMenuTriggerFor]="adminMenu" [ngClass]="{'adminStyleMode': adminMode}">Admin</button>
+            <mat-menu #adminMenu>
+                <a mat-menu-item routerLink="/tasks/create" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Criar Tarefa</a>
+                <a mat-menu-item routerLink="/users" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Usuários</a>
+                <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="!adminMode">Ligar Modo Admin</button>
+                <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="adminMode">Desligar Modo Admin</button>
+            </mat-menu>
         </li>
         <li *ngIf="!userIsAuthenticated">
             <a mat-button routerLink="/login" routerLinkActive="mat-accent">Entrar</a>
         </li>
         <li *ngIf="!userIsAuthenticated">
             <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
-        </li>
-        <li *ngIf="userIsAdmin">
-            <button mat-button (click)="onToggleAdminMode()" [ngClass]="{'adminStyleMode': adminMode}">Modo Admin</button>
         </li>
         <li *ngIf="userIsAuthenticated">
             <button mat-button (click)="onLogout()">Sair</button>
