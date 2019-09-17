@@ -19,7 +19,8 @@ const routes: Routes = [
     { path: 'tasks/edit/:taskId', component: TaskCreateComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
-    { path: 'users', component: UsersComponent}
+    { path: 'user/edit/:userId', component: SignupComponent, canActivate: [AuthGuard] },
+    { path: 'users', component: UsersComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

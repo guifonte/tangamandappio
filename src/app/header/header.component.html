@@ -27,7 +27,7 @@
             <mat-menu #accountMenu>
                 <p class="email-span">{{ userEmail }}</p>
                 <mat-divider></mat-divider>
-                <button mat-menu-item class="menu-item">Configurações da Conta</button>
+                <button mat-menu-item class="menu-item" routerLinkActive="adminStyleMode" [routerLink]="['/user/edit', userId]">Configurações da Conta</button>
                 <mat-divider></mat-divider>
                 <button mat-menu-item (click)="onLogout()" class="menu-item">Sair</button>
             </mat-menu>

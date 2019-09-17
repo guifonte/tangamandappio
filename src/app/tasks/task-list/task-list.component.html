@@ -18,7 +18,12 @@
                     <span class="spacer"></span>
                     <button mat-button color="primary" *ngIf="userIsAdmin && adminMode">FAZER</button>
                 </mat-card>
-                <mat-card class="member-card" *ngIf='member.userId != task.inCharge.id'>
+                <mat-card class="member-card" *ngIf='member.userId != task.inCharge.id && member.userId != yourId'>
+                    {{ member.nickname }}
+                    <span class="spacer"></span>
+                    <button mat-button color="primary" *ngIf="userIsAdmin && adminMode" >FAZER</button>
+                </mat-card>
+                <mat-card class="member-card your-card" *ngIf='member.userId == yourId && task.inCharge.id != yourId'>
                     {{ member.nickname }}
                     <span class="spacer"></span>
                     <button mat-button color="primary" *ngIf="userIsAdmin && adminMode" >FAZER</button>

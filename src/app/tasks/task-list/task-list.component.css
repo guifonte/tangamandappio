@@ -30,16 +30,12 @@ button{
     display: flex;
 }
 
-.spacer {
-    flex: 1 1 auto;
-}
-
 .in-charge{
     background: #eca1a6;
 }
 
 .your-card{
-    background: #82b74b;
+    background: #ADD8E6;
 }
 
 .vertical-center {

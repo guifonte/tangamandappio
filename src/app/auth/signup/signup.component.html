@@ -1,11 +1,12 @@
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
+  <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading" >
     <mat-form-field>
       <input
         matInput
         type="email"
         name="email"
+        [ngModel]="user?.email"
         required
         email
         placeholder="E-Mail"
@@ -13,7 +14,7 @@
         #emailInput="ngModel">
       <mat-error *ngIf="emailInput.invalid">Insira um endereço de E-mail válido</mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field *ngIf="mode=='create'">
       <input
         matInput
         type="password"
@@ -29,6 +30,7 @@
         matInput
         type="text"
         name="firstName"
+        [ngModel]="user?.firstName"
         required
         ngModel
         text
@@ -41,6 +43,7 @@
         matInput
         type="text"
         name="lastName"
+        [ngModel]="user?.lastName"
         required
         ngModel
         text
@@ -53,6 +56,7 @@
           matInput
           type="text"
           name="nickname"
+          [ngModel]="user?.nickname"
           required
           ngModel
           text
@@ -60,10 +64,31 @@
           #nickname="ngModel">
         <mat-error *ngIf="nickname.invalid">Insira o seu apelido</mat-error>
       </mat-form-field>
-    <button
-      mat-raised-button
-      *ngIf="!isLoading"
-      color = "primary"
-      type="submit">Registrar</button>
+      <ul>
+        <li *ngIf="!isLoading && mode=='create'">
+          <button
+            mat-raised-button
+            *ngIf="!isLoading"
+            color = "primary"
+            type="submit">Registrar
+          </button>
+        </li>
+        <li *ngIf="!isLoading && mode=='edit'"> 
+            <button
+              mat-raised-button
+              color = "primary"
+              type="submit">Salvar
+            </button>
+          </li>
+        <span class="spacer"></span>
+        <li>
+          <button
+            mat-raised-button
+            *ngIf="!isLoading && mode=='edit'"
+            color = "primary"
+            type="submit">Mudar Senha
+          </button>
+        </li>
+      </ul>
   </form>
 </mat-card>

@@ -1,5 +1,6 @@
 const express = require('express');
 
+const checkAuth = require("../middleware/check-auth");
 const checkAdminAuth = require("../middleware/check-admin-auth");
 const UserController = require("../controllers/user");
 
@@ -12,6 +13,8 @@ router.post("/login", UserController.userLogin);
 //router.get('/:email', checkAdminAuth, UserController.getUserInfoByEmail);
 
 router.get("", checkAdminAuth, UserController.getUsers);
+
+router.get('/:id', checkAuth, UserController.getUserData);
 
 router.get("/authorized", checkAdminAuth, UserController.getAuthorizedUsers);
 

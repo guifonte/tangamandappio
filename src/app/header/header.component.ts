@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     userIsAuthorized;
     userIsAdmin;
     userFirstName;
+    userId;
     userEmail;
     adminMode = false;
     private authListenerSubs: Subscription;
@@ -28,6 +29,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.userIsAuthenticated = this.authService.getIsAuth();
         this.userFirstName = this.authService.getUserFirstName();
+        this.userId = this.authService.getUserId();
         this.userEmail = this.authService.getUserEmail();
         this.userIsAuthorized = this.authService.getIsAuthorized();
         this.userIsAdmin = this.authService.getIsAdmin();
@@ -37,6 +39,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           .subscribe(isAuthenticated => {
             this.userIsAuthenticated = isAuthenticated;
             this.userFirstName = this.authService.getUserFirstName();
+            this.userId = this.authService.getUserId();
           });
         this.authorizedListenerSubs = this.authService
           .getAuthorizedStatusListener()

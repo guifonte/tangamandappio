@@ -102,6 +102,17 @@ export class AuthService {
       } ));
   }
 
+  getUser(userId: string){
+    return this.http.get<{message: string,
+                        user: {
+                         _id: string, 
+                         email: string, 
+                         firstName: string, 
+                         lastName: string,
+                         nickname: string}
+                        }>(BACKEND_URL + userId)
+  }
+
   getAuthorizedUsers(){
     return this.http.get<{message: string, users: any}>(BACKEND_URL + 'authorized')
       .pipe(map(usersData => {

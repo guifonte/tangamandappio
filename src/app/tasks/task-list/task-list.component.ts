@@ -65,6 +65,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
             .getAuthStatusListener()
             .subscribe(isAuthenticated => {
                 this.userIsAuthenticated = isAuthenticated;
+                this.yourId = this.authService.getUserId()
             });
 
         this.adminStatusSub = this.authService
