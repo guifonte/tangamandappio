@@ -112,6 +112,19 @@ exports.getUsers = (req, res, next) => {
   });
 }
 
+exports.getUserData = (req, res, next) => {
+  User.findOne({_id: req.params.id},'_id email firstName lastName nickname').then(user => {
+    if(user) {
+      res.status(200).json({
+        message: "Usuários obtidos com sucesso",
+        user: user
+      });
+    } else {
+      res.status(404).json({message: 'Nenhum usuário foi encontrado'});
+    } 
+  });
+}
+
 exports.getAuthorizedUsers = (req, res, next) => {
   User.find({authorized: true},'_id firstName lastName nickname').then(users => {
     if(users) {
