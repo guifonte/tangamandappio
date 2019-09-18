@@ -12,8 +12,8 @@ import { UserData } from '../user-data.model';
 export class SignupComponent implements OnInit, OnDestroy {
   user: UserData;
   isLoading = false;
-  private mode = 'create';
-  private userId: string;
+  mode = 'create';
+  userId: string;
 
   private authStatusSub: Subscription;
 

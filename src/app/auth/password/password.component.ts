@@ -22,7 +22,6 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     userId;
     buttonDisabled = true;
     passForm: FormGroup;
-
     matcher = new MyErrorStateMatcher();
 
     constructor(public authService: AuthService, public route: ActivatedRoute, private formBuilder: FormBuilder) {
