@@ -10,6 +10,7 @@ import { WaitComponent } from './wait/wait.component';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { UsersComponent } from './auth/users/users.component';
+import { PasswordComponent } from './auth/password/password.component';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -20,6 +21,7 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'user/edit/:userId', component: SignupComponent, canActivate: [AuthGuard] },
+    { path: 'user/password/:userId', component: PasswordComponent, canActivate: [AuthGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard]}
 ];
 

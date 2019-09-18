@@ -20,4 +20,8 @@ router.get("/authorized", checkAdminAuth, UserController.getAuthorizedUsers);
 
 router.put("", checkAdminAuth, UserController.updateUsers);
 
+router.put("/:id", checkAuth, UserController.updateUser);
+
+router.put("/password/:id", checkAuth, UserController.updatePassword);
+
 module.exports = router;

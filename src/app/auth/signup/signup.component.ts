@@ -55,7 +55,11 @@ export class SignupComponent implements OnInit, OnDestroy {
     if(this.mode == 'create') {
       this.authService.createUser(form.value.email, form.value.password, form.value.firstName, form.value.lastName, form.value.nickname);
     } else {
-      //this.authService.editUser(this.userId, form.value.email, form.value.firstName, form.value.lastName, form.value.nickname);
+      this.user.email = form.value.email
+      this.user.firstName = form.value.firstName
+      this.user.lastName = form.value.lastName
+      this.user.nickname = form.value.nickname
+      this.authService.updateUser(this.user);
     }
   }
 

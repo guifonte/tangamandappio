@@ -32,6 +32,60 @@ exports.createUser = (req, res, next) => {
       });
   }
 
+exports.updatePassword = (req, res, next) => {
+  console.log(req.body)
+  console.log(req.params.id)
+  let fetchedUser;
+  User.findOne({_id: req.params.id})
+    .then(user => {
+      if(!user) {
+        return res.status(401).json({
+          message: "Não existe usuário cadastrado nesse e-mail"
+        });
+      }
+      fetchedUser = user;
+      return bcrypt.compare(req.body.oldPassword, user.password);
+    })
+    .then(result => {
+      if (!result) {
+        return res.status(401).json({
+          message: "A senha está incorreta"
+        });
+      }
+      bcrypt.hash(req.body.newPassword, 10)
+      .then(hash => {
+        User.updateOne({_id: req.params.id},{$set:{password:hash}})
+        .then(() => {
+          const token = jwt.sign(
+            { email: fetchedUser.email,
+              userId: fetchedUser._id,
+              firstName: fetchedUser.firstName,
+              lastName: fetchedUser.lastName,
+              nickname: fetchedUser.nickname,
+              admin: fetchedUser.admin,
+              authorized: fetchedUser.authorized
+            },
+            process.env.JWT_KEY,
+            { expiresIn: "1h" }
+          );
+          res.status(200).json({
+            token: token,
+            expiresIn: 3600,
+            userId: fetchedUser._id,
+            firstName: fetchedUser.firstName,
+            lastName: fetchedUser.lastName,
+            nickname: fetchedUser.nickname,
+            email: fetchedUser.email,
+            admin: fetchedUser.admin,
+            authorized: fetchedUser.authorized
+          })
+        }).catch(err => {
+          res.status(500).json({message: 'Error'})
+        })
+      })
+    })
+}
+
 exports.userLogin = (req, res, next) => {
     let fetchedUser;
     User.findOne({ email: req.body.email })
@@ -75,7 +129,7 @@ exports.userLogin = (req, res, next) => {
         });
     })
     .catch(err => {
-        return res.status(401).json({
+      return res.status(401).json({
         message: "Auth failed"
         });
     });
@@ -155,3 +209,53 @@ exports.updateUsers = (req, res, next) => {
     });
     res.status(200).json( { message: "Usuário atualizado com sucesso"});
   }
+
+exports.updateUser = (req, res, next) => {
+  const user = req.body
+  if(user.userId == req.userData.userId) {
+    User.updateOne({_id: req.params.id},
+      { $set:{firstName:user.firstName,
+              lastName: user.lastName,
+              nickname: user.nickname,
+              email: user.email}})
+              .then(() => {
+                User.findOne({_id: user.userId})
+                .then(user => {
+                  if (!user) {
+                    return res.status(401).json({
+                      message: "Não existe usuário cadastrado nesse e-mail"
+                    });
+                  }
+                  const token = jwt.sign(
+                    { email: user.email,
+                      userId: user._id,
+                      firstName: user.firstName,
+                      lastName: user.lastName,
+                      nickname: user.nickname,
+                      admin: user.admin,
+                      authorized: user.authorized
+                    },
+                    process.env.JWT_KEY,
+                    { expiresIn: "1h" }
+                  );
+                  res.status(200).json({
+                    token: token,
+                    expiresIn: 3600,
+                    userId: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    nickname: user.nickname,
+                    email: user.email,
+                    admin: user.admin,
+                    authorized: user.authorized
+                  });
+                })
+              }).catch(err => {
+                res.status(500).json({message: 'Error'});
+              })
+  } else {
+    return res.status(401).json({
+      message: "Auth failed"
+      });
+  }
+}

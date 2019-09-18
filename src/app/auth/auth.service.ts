@@ -7,6 +7,8 @@ import { map } from 'rxjs/operators';
 import { environment } from "../../environments/environment"
 import { AuthData } from './auth-data.model';
 import { UserData } from './user-data.model';
+import { identifierModuleUrl } from '@angular/compiler';
+import { stringify } from 'querystring';
 
 const BACKEND_URL = environment.apiURL + "/user/"
 
@@ -111,6 +113,89 @@ export class AuthService {
                          lastName: string,
                          nickname: string}
                         }>(BACKEND_URL + userId)
+  }
+
+  updateUser(user: UserData) {
+    return this.http.put<{
+      token: string,
+      expiresIn: number,
+      userId: string,
+      firstName: string,
+      lastName: string,
+      nickname: string,
+      email: string,
+      admin: boolean,
+      authorized: boolean}>(BACKEND_URL + user.userId, user)
+      .subscribe(response => {
+        const token = response.token;
+        this.token = token;
+        if (token) {
+          const expiresInDuration = response.expiresIn;
+          this.setAuthTimer(expiresInDuration);
+          this.isAuthenticated = true;
+          this.isAdmin = response.admin;
+          this.isAuthorized = response.authorized;
+          this.userId = response.userId;
+          this.firstName = response.firstName;
+          this.lastName = response.lastName;
+          this.nickname = response.nickname;
+          this.email = response.email;
+          this.authStatusListener.next(true);
+          if (this.isAdmin == true) this.adminStatusListener.next(true)
+          else this.adminStatusListener.next(false)
+          if (this.isAuthorized == true ) this.authorizedStatusListener.next(true)
+          else this.authorizedStatusListener.next(false)
+          this.emailListener.next(this.email)
+          const now = new Date();
+          const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
+          const user: UserData = { userId: this.userId, firstName: this.firstName, lastName: this.lastName, nickname: this.nickname, email: this.email, admin: this.isAdmin, authorized: this.isAuthorized};
+          this.saveAuthData(token, expirationDate, user);
+          this.router.navigate(['/tasks']);
+        }
+      }, error => {
+        this.authStatusListener.next(false);
+      });
+  }
+
+  changePassword(oldPassword: string, newPassword: string){
+      return this.http.put<{token: string,
+        expiresIn: number,
+        userId: string,
+        firstName: string,
+        lastName: string,
+        nickname: string,
+        email: string,
+        admin: boolean,
+        authorized: boolean}>(BACKEND_URL + 'password/' + this.userId, {oldPassword: oldPassword, newPassword: newPassword})
+        .subscribe(response => {
+          const token = response.token;
+          this.token = token;
+          if (token) {
+            const expiresInDuration = response.expiresIn;
+            this.setAuthTimer(expiresInDuration);
+            this.isAuthenticated = true;
+            this.isAdmin = response.admin;
+            this.isAuthorized = response.authorized;
+            this.userId = response.userId;
+            this.firstName = response.firstName;
+            this.lastName = response.lastName;
+            this.nickname = response.nickname;
+            this.email = response.email;
+            this.authStatusListener.next(true);
+            if (this.isAdmin == true) this.adminStatusListener.next(true)
+            else this.adminStatusListener.next(false)
+            if (this.isAuthorized == true ) this.authorizedStatusListener.next(true)
+            else this.authorizedStatusListener.next(false)
+            this.emailListener.next(this.email)
+            const now = new Date();
+            const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
+            const user: UserData = { userId: this.userId, firstName: this.firstName, lastName: this.lastName, nickname: this.nickname, email: this.email, admin: this.isAdmin, authorized: this.isAuthorized};
+            this.saveAuthData(token, expirationDate, user);
+            this.router.navigate(['/tasks']);
+          }
+        }, error => {
+          this.authStatusListener.next(false);
+        })
   }
 
   getAuthorizedUsers(){
