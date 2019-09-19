@@ -12,11 +12,11 @@ router.post("/login", UserController.userLogin);
 
 //router.get('/:email', checkAdminAuth, UserController.getUserInfoByEmail);
 
-router.get("", checkAdminAuth, UserController.getUsers);
+router.get("/authorized", checkAdminAuth, UserController.getAuthorizedUsers);
 
 router.get('/:id', checkAuth, UserController.getUserData);
 
-router.get("/authorized", checkAdminAuth, UserController.getAuthorizedUsers);
+router.get("", checkAdminAuth, UserController.getUsers);
 
 router.put("", checkAdminAuth, UserController.updateUsers);
 

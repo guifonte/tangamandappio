@@ -180,7 +180,7 @@ exports.getUserData = (req, res, next) => {
 }
 
 exports.getAuthorizedUsers = (req, res, next) => {
-  User.find({authorized: true},'_id firstName lastName nickname').then(users => {
+  User.find({authorized: true},'_id firstName lastName nickname').then(users => {   
     if(users) {
       res.status(200).json({
         message: "Usuários obtidos com sucesso",
@@ -191,7 +191,6 @@ exports.getAuthorizedUsers = (req, res, next) => {
     } 
   });
 }
-
 
 exports.updateUsers = (req, res, next) => {
   async.eachSeries(req.body, function updateUser(user, done) {
