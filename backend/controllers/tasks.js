@@ -5,16 +5,18 @@ exports.createTask = (req, res, next) => {
     let membersId = req.body.members.map(member => {
         return member.id
     })
-    console.log(membersId)
 
     let pos = -1
-    let members = req.body.members.map(member => {
+    let shuffledMembers = shuffle(membersId)
+ 
+    let members = shuffledMembers.map(memberId => {
         pos = pos+1
         return {
-            userId: member.id,
+            userId: memberId,
             position: pos
         }
     })
+
     let inCharge = members[Math.floor(Math.random()*members.length)].userId
 
     const task = new Task({
@@ -67,103 +69,33 @@ exports.updateTask = (req, res, next) => {
 }
 
 exports.getTasks = (req, res, next) => {
-    Task.find()
-        .then(documents => {
-            return Promise.all(documents.map(async function(task) {
-                //console.log('TASK')
-                //console.log(task)
-                let membersId = task.members.map(member => {
-                    return member.userId
-                })
-                return await User.find({_id: membersId}).then(result => {
-                    //console.log('MEMBERS')
-                    //console.log(result)
-                    members = result.map(user => {
-                        foundMember = task.members.find(function(member) {
-                            id1 = String(member.userId)
-                            id2 = String(user._id)                       
-                            return id1 == id2
-                        })
-                        return {
-                            userId: user._id,
-                            nickname: user.nickname,
-                            position: foundMember.position
-                        }
-                    })
-                    return {
-                        _id: task._id,
-                        name: task.name,
-                        description: task.description,
-                        inCharge: task.inCharge,
-                        members: members
-                    }
-                }).catch( error => {
-                    res.status(500).json({
-                        message: 'Problemas para obter os dados dos membros do grupo!'
-                    })
-                })
+    Task.find().populate({path: 'members.userId', select: '_id nickname', model: User}).then(tasks => {
+        let mappedTasks = tasks.map(task => {
+            let members = task.members.map(member => {
+                return {
+                    userId: member.userId._id,
+                    nickname: member.userId.nickname,
+                    position: member.position
+                }
             })
-        ).then(tasks => {
-            res.status(201).json({
-                tasks: tasks,
-                message: 'Tarefas obtidas com sucesso!'
-            });
-        })})
-        .catch( error => {      
-            res.status(500).json({
-                message: 'Não foi possível retornar a lista de tarefas!'
-            })
+            return {
+                _id: task._id,
+                name: task.name,
+                description: task.description,
+                inCharge: task.inCharge,
+                members: members
+            }
+        })
+        res.status(201).json({
+            tasks: mappedTasks,
+            message: 'Tarefas obtidas com sucesso!'
         });
-}
-
-exports.getTasks2 = (req, res, next) => {
-    Task.find()
-        .then(documents => {
-            return Promise.all(documents.map(async function(task) {
-                //console.log('TASK')
-                //console.log(task)
-                let membersId = task.members.map(member => {
-                    return member.userId
-                })
-                return await User.find({_id: membersId}).then(result => {
-                    //console.log('MEMBERS')
-                    //console.log(result)
-                    members = result.map(user => {
-                        foundMember = task.members.find(function(member) {
-                            id1 = String(member.userId)
-                            id2 = String(user._id)                       
-                            return id1 == id2
-                        })
-                        return {
-                            userId: user._id,
-                            nickname: user.nickname,
-                            position: foundMember.position
-                        }
-                    })
-                    return {
-                        _id: task._id,
-                        name: task.name,
-                        description: task.description,
-                        inCharge: task.inCharge,
-                        members: members
-                    }
-                }).catch( error => {
-                    res.status(500).json({
-                        message: 'Problemas para obter os dados dos membros do grupo!'
-                    })
-                })
-            })
-        ).then(tasks => {
-            res.status(201).json({
-                tasks: tasks,
-                message: 'Tarefas obtidas com sucesso!'
-            });
-        })})
-        .catch( error => {      
-            res.status(500).json({
-                message: 'Não foi possível retornar a lista de tarefas!'
-            })
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: 'Não foi possível obter a lista de tarefas'
         });
+    });
 }
 
 exports.getTask = (req, res, next) => {
@@ -182,10 +114,8 @@ exports.getTask = (req, res, next) => {
 }
 
 exports.deleteTask = (req, res, next) => {
-    console.log(req.params)
     Task.deleteOne({ _id: req.params.id })
         .then(result => {
-            console.log(result);
             res.status(200).json({ message: 'Tarefa apagada!' });
         })
         .catch( error => {      
@@ -256,3 +186,22 @@ exports.makeTask2 = (req, res, next) => {
             })
         });  
 }
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+  }

@@ -28,7 +28,7 @@ export class TasksService {
                         name: task.name,
                         description: task.description,
                         inCharge: task.inCharge,
-                        members: task.members,
+                        members: task.members.sort((a,b)=>a.position-b.position),
                         id: task._id
                     };
                 });
