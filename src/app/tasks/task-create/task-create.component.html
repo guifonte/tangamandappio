@@ -34,6 +34,10 @@
                         <mat-checkbox [(ngModel)]="element.selected"></mat-checkbox>
                     </td>
                 </ng-container>
+                <ng-container matColumnDef="nickname">
+                        <th mat-header-cell *matHeaderCellDef> Apelido </th>
+                        <td mat-cell *matCellDef="let element"> {{element.nickname}} </td>
+                </ng-container>
                 <ng-container matColumnDef="firstName">
                     <th mat-header-cell *matHeaderCellDef> Nome </th>
                     <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>

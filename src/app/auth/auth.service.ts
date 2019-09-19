@@ -199,7 +199,7 @@ export class AuthService {
   }
 
   getAuthorizedUsers(){
-    return this.http.get<{message: string, users: any}>(BACKEND_URL + 'authorized')
+    return this.http.get<{message: string, users: any}>(BACKEND_URL + 'authorized/')
       .pipe(map(usersData => {
         return usersData.users.map(user => {
           return {

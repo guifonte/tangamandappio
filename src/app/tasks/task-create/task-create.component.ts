@@ -21,7 +21,7 @@ export class TaskCreateComponent implements OnInit{
     private mode = 'create'
     private taskId: string;
 
-    displayedColumns: string[] = ['selected','firstName','lastName']
+    displayedColumns: string[] = ['selected','nickname','firstName','lastName']
     dataSource: MemberData[] = [];
 
     constructor(public tasksService: TasksService, public route: ActivatedRoute, private authService: AuthService) {}
@@ -33,7 +33,24 @@ export class TaskCreateComponent implements OnInit{
                 this.taskId = paramMap.get('taskId')
                 this.isLoading = true;
                 this.tasksService.getTask(this.taskId).subscribe(taskData => {
-                    //this.task = {id: taskData._id, name: taskData.name, description: taskData.description, members: taskData.members }
+                    this.task = {id: taskData._id, name: taskData.name, description: taskData.description, members: taskData.members, inCharge: null }
+                    this.authService.getAuthorizedUsers().subscribe(usersData => {
+                        this.isLoading = false;
+                        this.dataSource = usersData.map(user => {
+                            let sel = false;
+                            let res = taskData.members.find(member => member.userId === user.id)
+                            if(res) {
+                                sel = true;
+                            }
+                            return {
+                                id: user.id,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                nickname: user.nickname,
+                                selected: sel
+                            }
+                        })
+                    })
                     this.isLoading = false;
                 })
             } else {
@@ -46,6 +63,7 @@ export class TaskCreateComponent implements OnInit{
                             id: user.id,
                             firstName: user.firstName,
                             lastName: user.lastName,
+                            nickname: user.nickname,
                             selected: false
                         }
                     })
