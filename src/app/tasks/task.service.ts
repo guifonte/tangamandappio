@@ -72,10 +72,22 @@ export class TasksService {
             });
     }
 
-    updateTask( id: string, name: string, description: string, members: MemberData[] ) {
-        const task: any = { id: id, name: name, description: description, members: members }
-        this.http.put(BACKEND_URL + id, task)
-            .subscribe(() => {
+    updateTask( id: string, name: string, description: string, users: any ) {
+
+        let membersId = users.map(member => {
+            if(member.selected == true) return { id: member.id }
+        }).filter(id => {
+            return id != null
+        });
+
+        const sendTask: any = { id: id, name: name, description: description, members: membersId };
+        this.http.put<{message: string, taskId: string, inCharge: string, members: MemberData[]}>(BACKEND_URL + id, sendTask)
+            .subscribe((responseData) => {
+                const task: Task = { id: responseData.taskId, 
+                    name: name,
+                    description: description, 
+                    members: responseData.members,
+                    inCharge: responseData.inCharge };
                 const updatedTasks = [...this.tasks];
                 const oldTaskIndex = updatedTasks.findIndex(t => t.id === task.id);
                 updatedTasks[oldTaskIndex] = task;
