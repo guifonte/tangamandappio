@@ -51,21 +51,114 @@ exports.createTask = (req, res, next) => {
 }
 
 exports.updateTask = (req, res, next) => {
-    const task = new Task({
-        _id: req.body.id,
-        name: req.body.name,
-        description: req.body.description
-    });
-    Task.updateOne({ _id: req.params.id }, task)
+    Task.findOne({_id: req.params.id })
         .then(result => {
-            console.log(result);
-            res.status(200).json( { message: "Tarefa atualizada com sucesso"});
+            var inCharge
+            var inChargeMember
+            
+            oldMembers = result.members
+            oldMembersId = result.members.map(member => member.userId)
+            newMembersId = req.body.members.map(element => element.id)
+            oldInCharge = result.inCharge
+            //remove the removed members
+            filteredMembers = oldMembers.filter(member =>  newMembersId.includes(String(member.userId)))
+            //make and shuffle list of members to be added
+            membersIdToBeAdded = newMembersId.filter(id =>  !oldMembersId.includes(String(id)))
+            var shuffledMembersIdToBeAdded
+            if (membersIdToBeAdded.length != 0) {
+                shuffledMembersIdToBeAdded = shuffle(membersIdToBeAdded)
+            }
+            //check if the member in charge still in the members list
+            foundInCharge = newMembersId.find(element => { return element == oldInCharge })
+            if(foundInCharge) { //member in charge still in the members list
+                inCharge = oldInCharge
+            } else { //member im charge isn't in the members list anymore
+            //search for the position of the old member in charge
+            oldInChargePos = oldMembers.find(element => { return String(element.userId) == oldInCharge}).position
+            //get the next position, if it exists, otherwise, return null
+            inChargeMember = getNextPosition(filteredMembers,oldInChargePos,oldMembers.length-1)
+            }
+            filteredMembersId = filteredMembers.map(member => member.userId)
+            var newMembers
+
+            if (!foundInCharge) { // the member in charge was removed
+                if (!inChargeMember) { //all the members where changed
+                    inCharge = membersIdToBeAdded[Math.floor(Math.random()*membersIdToBeAdded.length)]
+                    let pos = -1        
+                    newMembers = shuffledMembersIdToBeAdded.map(memberId => {
+                        pos = pos+1
+                        return {
+                            userId: memberId,
+                            position: pos
+                        }
+                    })
+                } else { //the member in charge was removed and the next in the queue was found
+                    inCharge = inChargeMember.userId
+                    if(membersIdToBeAdded.length != 0) { // there are members to be added
+                        inChargeIndex = filteredMembersId.findIndex(id => String(id) == inCharge)
+                        Array.prototype.splice.apply(filteredMembersId, [inChargeIndex, 0].concat(shuffledMembersIdToBeAdded))
+                    }
+                    let pos = -1      
+                    newMembers = filteredMembersId.map(memberId => {
+                        pos = pos+1
+                        return {
+                            userId: memberId,
+                            position: pos
+                        }
+                    })
+                }
+            } else { // the member in charge was not removed
+                if(membersIdToBeAdded.length != 0) { // there are members to be added
+                    inChargeIndex = filteredMembersId.findIndex(id => String(id) == inCharge)
+                    Array.prototype.splice.apply(filteredMembersId, [inChargeIndex, 0].concat(shuffledMembersIdToBeAdded))
+                }
+                let pos = -1        
+                newMembers = filteredMembersId.map(memberId => {
+                    pos = pos+1
+                    return {
+                        userId: memberId,
+                        position: pos
+                    }
+                })
+            }
+
+            const task = new Task({
+                _id: req.params.id,
+                name: req.body.name,
+                description: req.body.description,
+                inCharge: inCharge,
+                members: newMembers
+            });
+            Task.updateOne({ _id: req.params.id }, task)
+                .then(() => {
+                    User.find({_id: newMembersId}).then(result => {
+                        membersData = result.map(user => {
+                            return {
+                                userId: user._id,
+                                nickname: user.nickname,
+                                position: newMembers.find(member => { 
+                                    return String(member.userId) == String(user._id) }).position
+                            }
+                        })
+                        res.status(201).json({
+                            taskId: task._id,
+                            inCharge: task.inCharge,
+                            members: membersData,
+                            message: 'Tarefa atualizada com sucesso!'
+                        });
+                    })
+                })
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Não foi possível atualizar as configurações da tarefa!'
+                    });
+                });
         })
         .catch(error => {
             res.status(500).json({
                 message: 'Não foi possível atualizar as configurações da tarefa!'
             });
-        });
+        })
 }
 
 exports.getTasks = (req, res, next) => {
@@ -205,3 +298,36 @@ function shuffle(array) {
   
     return array;
   }
+
+
+function getNextPosition(arr, value, maxPosition) {
+    var len = arr.length;
+    var i;
+    var smallest = maxPosition;
+    var smallestId;
+    var closest = maxPosition
+    var closestId;
+
+    existMaxPos = arr.find(element => {return element.position == maxPosition})
+
+    for (i=0; i < len; i++) {
+        if (arr[i].position < smallest) {
+            smallest = arr[i].position
+            smallestId = arr[i].userId
+        }
+        if (arr[i].position > value && arr[i].position < closest) {
+            closest = arr[i].position
+            closestId = arr[i].userId
+        }
+    }
+ 
+    if (closest != maxPosition) {
+        return {userId: closestId, position: closest}
+    } else if (existMaxPos) {
+        return {userId: existMaxPos.userId, position: existMaxPos.position}
+    } else if (smallest != maxPosition) {
+        return {userId: smallestId, position: smallest}
+    } else {
+        return undefined
+    }
+}
