@@ -108,7 +108,8 @@ export class TasksService {
     }
 
     makeTask(taskId: string) {
-        this.http.post<{message: string, inCharge: string}>(BACKEND_URL + "make/", {id: taskId})
+        let date = new Date
+        this.http.post<{message: string, inCharge: string}>(BACKEND_URL + "make/", {id: taskId, date: date})
             .subscribe((responseData) => {
                 const updatedTasks = [...this.tasks];
                 const oldTaskIndex = updatedTasks.findIndex(t => t.id === taskId);
