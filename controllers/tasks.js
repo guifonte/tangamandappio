@@ -1,4 +1,5 @@
 const Task = require("../models/task");
+const TaskExecution = require("../models/task-execution");
 const User = require("../models/user");
 
 exports.createTask = (req, res, next) => {
@@ -235,7 +236,12 @@ exports.makeTask = (req, res, next) => {
             return foundTask
         }).then(task => {
             Task.updateOne({_id: task._id}, task).then(result => {
-                res.status(200).json({ message: 'Tarefa atualizada', inCharge: task.inCharge })
+                taskExec = new TaskExecution({userId: req.userData.userId, taskId: req.body.id, executionTime: req.body.date})
+                taskExec.save().then(() => {
+                    res.status(200).json({ message: 'Tarefa atualizada', inCharge: task.inCharge })
+                    }).catch( error => {
+                        res.status(500).json({ message: 'Não foi possível atualizada a tarefa!' })
+                    })
             }).catch( error => {      
                 res.status(500).json({
                     message: 'Não foi possível atualizada a tarefa!'
