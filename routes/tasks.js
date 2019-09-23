@@ -10,6 +10,12 @@ router.post("", checkAdminAuth, TasksController.createTask);
 
 router.post("/make", checkAuth, TasksController.makeTask);
 
+router.post("/makeinadvance", checkAuth, TasksController.makeTaskinAdvance);
+
+router.post("/unmake", checkAuth, TasksController.unmakeTask);
+
+router.post("/unmakeinadvance", checkAuth, TasksController.unmakeTaskinAdvance);
+
 router.put("/:id", checkAdminAuth, TasksController.updateTask);
 
 router.get('', checkAuth, TasksController.getTasks);
