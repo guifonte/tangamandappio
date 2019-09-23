@@ -7,26 +7,32 @@
             <div *ngIf="task.inCharge.id != yourId" class="vez vertical-centered"><p>Vez de {{ task.inCharge.nickname }}</p></div>
             <div *ngIf="task.inCharge.id == yourId" class="vez vertical-centered"><p>Sua vez!</p></div>
             <div *ngIf="task.inCharge.id == yourId" class="vertical-centered">
-                <button mat-raised-button color="accent" (click)="onMakeTask(task.task.id)">Fazer</button>
+                <button mat-raised-button color="accent" (click)="onMakeTask(task.task.id, yourId)">Fazer</button>
             </div>
         </mat-expansion-panel-header>
         <p>{{ task.task.description }}</p>
         <mat-list>
             <mat-list-item *ngFor="let member of task.task.members">
+                <mat-card class="member-card" [style.background-color]="member.madeInAdvance ? 'rgb(171, 235, 224)': 'rgb(100, 119, 240)'" *ngIf='member.userId == yourId && task.inCharge.id != yourId'>
+                    {{ member.nickname }}
+                    <mat-icon *ngIf='member.madeInAdvance'>arrow_downward</mat-icon>
+                    <span class="spacer"></span>
+                    <!-- <button mat-button color="accent" *ngIf="(member.position == task.inCharge.position-1 || (task.inCharge.position == 0 && member.position == task.task.members.length-1))" (click)="onUnmakeTask(task.task.id, yourId)">DESFAZER</button> -->
+                    <button mat-raised-button color="primary" *ngIf='!member.madeInAdvance' (click)="onMakeTaskInAdvance(task.task.id, yourId)">ANTECIPAR</button>
+                    <button mat-raised-button color="accent" *ngIf='member.madeInAdvance' (click)="onUnmakeTaskInAdvance(task.task.id, yourId)">DESANTECIPAR</button>
+                </mat-card>
                 <mat-card class="member-card in-charge" *ngIf='member.userId == task.inCharge.id'>
                     {{ member.nickname }}
                     <span class="spacer"></span>
-                    <button mat-button color="primary" *ngIf="userIsAdmin && adminMode">FAZER</button>
+                    <button mat-button color="primary" *ngIf="userIsAdmin && adminMode" (click)="onMakeTask(task.task.id, member.userId)">FAZER</button>
                 </mat-card>
-                <mat-card class="member-card" *ngIf='member.userId != task.inCharge.id && member.userId != yourId'>
+                <mat-card class="member-card" [style.background-color]="member.madeInAdvance ? 'rgb(171, 235, 174)' : ''" *ngIf='member.userId != task.inCharge.id && member.userId != yourId'>
                     {{ member.nickname }}
+                    <mat-icon *ngIf='member.madeInAdvance'>arrow_downward</mat-icon>
                     <span class="spacer"></span>
-                    <button mat-button color="primary" *ngIf="userIsAdmin && adminMode" >FAZER</button>
-                </mat-card>
-                <mat-card class="member-card your-card" *ngIf='member.userId == yourId && task.inCharge.id != yourId'>
-                    {{ member.nickname }}
-                    <span class="spacer"></span>
-                    <button mat-button color="primary" *ngIf="userIsAdmin && adminMode" >FAZER</button>
+                    <button mat-button color="primary" *ngIf="userIsAdmin && adminMode && !member.madeInAdvance" (click)="onMakeTaskInAdvance(task.task.id, member.userId)">ANTECIPAR</button>
+                    <button mat-button color="accent" *ngIf="userIsAdmin && adminMode && member.madeInAdvance" (click)="onUnmakeTaskInAdvance(task.task.id, member.userId)">DESANTECIPAR</button>
+                    <!-- <button mat-button color="accent" *ngIf="userIsAdmin && adminMode && (member.position == task.inCharge.position-1 || (task.inCharge.position == 0 && member.position == task.task.members.length-1))" (click)="onUnmakeTask(task.task.id, member.userId)">DESFAZER</button> -->
                 </mat-card>
             </mat-list-item>
         </mat-list>

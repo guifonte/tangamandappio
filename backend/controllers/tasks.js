@@ -14,7 +14,8 @@ exports.createTask = (req, res, next) => {
         pos = pos+1
         return {
             userId: memberId,
-            position: pos
+            position: pos,
+            madeInAdvance: false
         }
     })
 
@@ -30,10 +31,12 @@ exports.createTask = (req, res, next) => {
     task.save().then(createdTask => {
         User.find({_id: membersId}).then(result => {
             membersData = result.map(user => {
+                foundMember = members.find(member => { return member.userId == user._id })
                 return {
                     userId: user._id,
                     nickname: user.nickname,
-                    position: members.find(member => { return member.userId == user._id }).position
+                    position: foundMember.position,
+                    madeInAdvance: foundMember.madeInAdvance
                 }
             })
             res.status(201).json({
@@ -90,7 +93,8 @@ exports.updateTask = (req, res, next) => {
                         pos = pos+1
                         return {
                             userId: memberId,
-                            position: pos
+                            position: pos,
+                            madeInAdvance: false
                         }
                     })
                 } else { //the member in charge was removed and the next in the queue was found
@@ -104,7 +108,8 @@ exports.updateTask = (req, res, next) => {
                         pos = pos+1
                         return {
                             userId: memberId,
-                            position: pos
+                            position: pos,
+                            madeInAdvance: false
                         }
                     })
                 }
@@ -118,7 +123,8 @@ exports.updateTask = (req, res, next) => {
                     pos = pos+1
                     return {
                         userId: memberId,
-                        position: pos
+                        position: pos,
+                        madeInAdvance: false
                     }
                 })
             }
@@ -134,11 +140,13 @@ exports.updateTask = (req, res, next) => {
                 .then(() => {
                     User.find({_id: newMembersId}).then(result => {
                         membersData = result.map(user => {
+                            foundMember = newMembers.find(member => { 
+                                return String(member.userId) == String(user._id) })
                             return {
                                 userId: user._id,
                                 nickname: user.nickname,
-                                position: newMembers.find(member => { 
-                                    return String(member.userId) == String(user._id) }).position
+                                position: foundMember.position,
+                                madeInAdvance: foundMember.madeInAdvance
                             }
                         })
                         res.status(201).json({
@@ -169,7 +177,8 @@ exports.getTasks = (req, res, next) => {
                 return {
                     userId: member.userId._id,
                     nickname: member.userId.nickname,
-                    position: member.position
+                    position: member.position,
+                    madeInAdvance: member.madeInAdvance
                 }
             })
             return {
@@ -220,29 +229,46 @@ exports.deleteTask = (req, res, next) => {
 }
 
 exports.makeTask = (req, res, next) => {
-    Task.find({ _id: req.body.id, inCharge: req.userData.userId })
-        .then(result => {
-            let foundTask = new Task(result[0])
-            member = foundTask.members.find(member => {return member.userId == req.userData.userId})
-            
-            position = member.position
-            newInChargePos = position+1
-            newInChargeMember = foundTask.members.find(member => {return member.position == newInChargePos})
-            if (newInChargeMember == undefined) {
-                newInChargeMember = foundTask.members.find(member => {return member.position == 0})
+    if (req.body.userId != req.userData.userId && req.userData.admin != true) {
+        return res.status(401).json({message: "Auth failed"}); 
+    } 
+
+    Task.findOne({ _id: req.body.taskId})
+        .then(foundTask => {
+            if(foundTask.inCharge == req.body.userId) { //just normal make task
+                member = foundTask.members.find(member => {return String(member.userId) == req.body.userId})
+                position = member.position
+                newInChargeFound = false
+                inAdvanceJumpedIds = [];
+                while(!newInChargeFound) {
+                    if(position < foundTask.members.length-1) position = position+1
+                    else position = 0
+                    tempInChargeIndex = foundTask.members.findIndex(member => {return member.position == position})
+                    if(foundTask.members[tempInChargeIndex].madeInAdvance == true){
+                        foundTask.members[tempInChargeIndex].madeInAdvance = false
+                        inAdvanceJumpedIds.push(foundTask.members[tempInChargeIndex].userId)
+                    } else {
+                        newInChargeId = foundTask.members[tempInChargeIndex].userId
+                        newInChargeFound = true
+                    }
+                }
+                foundTask.inCharge = newInChargeId
+            } else {
+                res.status(500).json({message: 'Não é a vez do usuário!'})
             }
-            newInChargeId = newInChargeMember.userId
-            foundTask.inCharge = newInChargeId
-            return foundTask
-        }).then(task => {
-            Task.updateOne({_id: task._id}, task).then(result => {
-                taskExec = new TaskExecution({userId: req.userData.userId, taskId: req.body.id, executionTime: req.body.date})
+            Task.updateOne({_id: foundTask._id}, foundTask).then(result => {
+                taskExec = new TaskExecution({userId: req.body.userId, 
+                    taskId: req.body.taskId, 
+                    executionTime: req.body.date, 
+                    creator: req.userData.userId,
+                    make: true,
+                    inAdvance: false})
                 taskExec.save().then(() => {
-                    res.status(200).json({ message: 'Tarefa atualizada', inCharge: task.inCharge })
+                    res.status(200).json({ message: 'Tarefa atualizada', inCharge: foundTask.inCharge, jumpedIds: inAdvanceJumpedIds })
                     }).catch( error => {
                         res.status(500).json({ message: 'Não foi possível atualizada a tarefa!' })
                     })
-            }).catch( error => {      
+            }).catch( error => {    
                 res.status(500).json({
                     message: 'Não foi possível atualizada a tarefa!'
                 })
@@ -255,25 +281,125 @@ exports.makeTask = (req, res, next) => {
         });  
 }
 
-exports.makeTask2 = (req, res, next) => {
-    Task.find({ _id: req.body.id, inCharge: req.userData.userId })
-        .then(result => {
-            let foundTask = new Task(result[0])
-            member = foundTask.members.find(member => {return member.userId == req.userData.userId})
-            
-            position = member.position
-            newInChargePos = position+1
-            newInChargeMember = foundTask.members.find(member => {return member.position == newInChargePos})
-            if (newInChargeMember == undefined) {
-                newInChargeMember = foundTask.members.find(member => {return member.position == 0})
+exports.makeTaskinAdvance = (req, res, next) => {
+    if (req.body.userId != req.userData.userId && req.userData.admin != true) {
+        return res.status(401).json({message: "Auth failed"}); 
+    }
+    Task.findOne({ _id: req.body.taskId})
+        .then(foundTask => {
+            if(foundTask.inCharge == req.body.userId) {
+                res.status(500).json({message: 'É a vez do usuário!'})
+            } else { //make task in advance
+                memberIndex = foundTask.members.findIndex(member => {return String(member.userId) === String(req.body.userId)})
+                if(memberIndex != undefined){
+                    foundTask.members[memberIndex].madeInAdvance = true
+                } else {
+                    res.status(500).json({message: 'Não foi possível atualizada a tarefa!'})
+                }
             }
-            newInChargeId = newInChargeMember.userId
-            foundTask.inCharge = newInChargeId
+            Task.updateOne({_id: foundTask._id}, foundTask).then(result => {
+                taskExec = new TaskExecution(
+                                            {userId: req.body.userId, 
+                                            taskId: req.body.taskId, 
+                                            executionTime: req.body.date, 
+                                            creator: req.userData.userId,
+                                            make: true,
+                                            inAdvance: true})
+                taskExec.save().then(() => {
+                    res.status(200).json({ message: 'Tarefa atualizada', inAdvanceId: req.body.userId })
+                }).catch( error => {
+                    res.status(500).json({ message: 'Não foi possível atualizada a tarefa!' })
+                })
+            }).catch( error => {   
+                res.status(500).json({
+                    message: 'Não foi possível atualizada a tarefa!'
+                })
+            });
+        })
+        .catch( error => {      
+            res.status(500).json({
+                message: 'Não foi possível atualizada a tarefa!'
+            })
+        });  
+}
+
+exports.unmakeTask = (req, res, next) => {
+    if (req.body.userId != req.userData.userId && req.userData.admin != true) {
+        return res.status(401).json({message: "Auth failed"}); 
+    } 
+    
+    Task.findOne({ _id: req.body.taskId})
+        .then(foundTask => {
+            if(foundTask.inCharge == req.body.userId) {
+                member = foundTask.members.find(member => {return member.userId == req.body.userId})
+                position = member.position
+                newInChargePos = position-1
+                newInChargeMember = foundTask.members.find(member => {return member.position == newInChargePos})
+                if (newInChargeMember == undefined) {
+                    newInChargeMember = foundTask.members.find(member => {return member.position == foundTask.members.length-1})
+                }
+                newInChargeId = newInChargeMember.userId
+                foundTask.inCharge = newInChargeId
+            } else { 
+                res.status(500).json({message: 'Não é a vez do usuário!'})
+            }
             return foundTask
-        }).then(task => {
+        }).then(task=> {
             Task.updateOne({_id: task._id}, task).then(result => {
-                res.status(200).json({ message: 'Tarefa atualizada', inCharge: task.inCharge })
-            }).catch( error => {      
+                taskExec = new TaskExecution({userId: req.body.userId, 
+                                            taskId: req.body.taskId, 
+                                            executionTime: req.body.date, 
+                                            creator: req.userData.userId,
+                                            make: false,
+                                            inAdvance: false})                      
+                taskExec.save().then(() => {
+                    res.status(200).json({ message: 'Tarefa atualizada', inCharge: task.inCharge })
+                    }).catch( error => {
+                        res.status(500).json({ message: 'Não foi possível atualizada a tarefa!' })
+                    })
+            }).catch( error => {    
+                res.status(500).json({
+                    message: 'Não foi possível atualizada a tarefa!'
+                })
+            });
+        })
+        .catch( error => {      
+            res.status(500).json({
+                message: 'Não foi possível atualizada a tarefa!'
+            })
+        });  
+}
+
+exports.unmakeTaskinAdvance = (req, res, next) => {
+    if (req.body.userId != req.userData.userId && req.userData.admin != true) {
+        return res.status(401).json({message: "Auth failed"}); 
+    }
+    Task.findOne({ _id: req.body.taskId})
+        .then(foundTask => {
+            if(foundTask.inCharge == req.body.userId) {
+                res.status(500).json({message: 'É a vez do usuário!'})
+            } else { //make task in advance
+                memberIndex = foundTask.members.findIndex(member => {return String(member.userId) === String(req.body.userId)})
+                if(memberIndex != undefined){
+                    foundTask.members[memberIndex].madeInAdvance = false
+                } else {
+                    res.status(500).json({message: 'Não foi possível atualizada a tarefa!'})
+                }
+            }
+            Task.updateOne({_id: foundTask._id}, foundTask).then(result => {
+                taskExec = new TaskExecution(
+                                            {userId: req.body.userId, 
+                                            taskId: req.body.taskId, 
+                                            executionTime: req.body.date, 
+                                            creator: req.userData.userId,
+                                            make: true,
+                                            inAdvance: true})
+                taskExec.save().then(() => {
+                    res.status(200).json({ message: 'Tarefa atualizada', inAdvanceId: req.body.userId })
+                }).catch( error => {
+                    res.status(500).json({ message: 'Não foi possível atualizada a tarefa!' })
+                })
+            }).catch( error => {   
                 res.status(500).json({
                     message: 'Não foi possível atualizada a tarefa!'
                 })

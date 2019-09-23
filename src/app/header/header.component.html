@@ -12,7 +12,7 @@
                 <a mat-menu-item routerLink="/tasks/create" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Criar Tarefa</a>
                 <a mat-menu-item routerLink="/users" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Usuários</a>
                 <mat-divider *ngIf="adminMode"></mat-divider>
-                <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="!adminMode">Ligar Modo Admin</button>
+                <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="!adminMode" >Ligar Modo Admin</button>
                 <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="adminMode">Desligar Modo Admin</button>
             </mat-menu>
         </li>

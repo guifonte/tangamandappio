@@ -20,7 +20,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
         { title: 'Lixo', description: 'Não é sua vez!' }
     ]; */
     tasks: Task[] = [];
-    tasksCompl: {task: Task, inCharge: {id: string, nickname: string}}[]
+    tasksCompl: {task: Task, inCharge: {id: string, nickname: string, position: number}}[]
     isLoading = false;
     userIsAuthenticated = false;
     userIsAdmin = false;
@@ -54,7 +54,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
                         task: task,
                         inCharge: {
                             id: task.inCharge,
-                            nickname: inChargeMember.nickname
+                            nickname: inChargeMember.nickname,
+                            position: inChargeMember.position
                         }
                     }
                 })
@@ -81,8 +82,25 @@ export class TaskListComponent implements OnInit, OnDestroy {
             })
     }
 
-    onMakeTask(taskId: string) {
-        this.tasksService.makeTask(taskId);
+    getColor(member: any){
+        if(member.userId == this.yourId)
+            return 
+    }
+
+    onMakeTask(taskId: string, userId: string) {
+        this.tasksService.makeTask(taskId, userId);
+    }
+
+    onMakeTaskInAdvance(taskId: string, userId: string) {
+        this.tasksService.makeTaskInAdvance(taskId, userId);
+    }
+
+    onUnmakeTask(taskId: string, userId: string) {
+        this.tasksService.unmakeTask(taskId, userId);
+    }
+
+    onUnmakeTaskInAdvance(taskId: string, userId: string) {
+        this.tasksService.unmakeTaskInAdvance(taskId, userId);
     }
 
     onDelete(taskId: string) {

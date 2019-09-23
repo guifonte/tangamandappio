@@ -107,20 +107,64 @@ export class TasksService {
             })
     }
 
-    makeTask(taskId: string) {
+    makeTask(taskId: string, userId: string) {
         let date = new Date
-        this.http.post<{message: string, inCharge: string}>(BACKEND_URL + "make/", {id: taskId, date: date})
+        this.http.post<{message: string, inCharge: string, jumpedIds: string[]}>(BACKEND_URL + "make/", {taskId: taskId, date: date, userId: userId})
             .subscribe((responseData) => {
                 const updatedTasks = [...this.tasks];
                 const oldTaskIndex = updatedTasks.findIndex(t => t.id === taskId);
                 updatedTasks[oldTaskIndex].inCharge = responseData.inCharge;
-                //let task = this.tasks.filter(task => task.id == taskId)[0]
-                //task.inCharge = responseData.inCharge;
-                //const updatedTasks = this.tasks.filter(task => task.id !== taskId)
-                //updatedTasks.push(task)
+                responseData.jumpedIds.forEach(id => {
+                    let index = updatedTasks[oldTaskIndex].members.findIndex(member =>{return member.userId == id})
+                    if(index != undefined) updatedTasks[oldTaskIndex].members[index].madeInAdvance = false
+                });
                 this.tasks = updatedTasks
                 this.tasksUpdated.next([...this.tasks])
                 console.log('Task made!')
+            }
+        )
+    }
+
+    makeTaskInAdvance(taskId: string, userId: string) {
+        let date = new Date
+        this.http.post<{message: string, inAdvanceId: string}>(BACKEND_URL + "makeinadvance/", {taskId: taskId, date: date, userId: userId})
+            .subscribe((responseData) => {
+                const updatedTasks = [...this.tasks];
+                const oldTaskIndex = updatedTasks.findIndex(t => t.id === taskId);
+                const memberId = updatedTasks[oldTaskIndex].members.findIndex(member => member.userId == responseData.inAdvanceId)
+                updatedTasks[oldTaskIndex].members[memberId].madeInAdvance = true;
+                this.tasks = updatedTasks
+                this.tasksUpdated.next([...this.tasks])
+                console.log('Task made in advance!')
+            }
+        )
+    }
+
+    unmakeTask(taskId: string, userId: string) {
+        let date = new Date
+        this.http.post<{message: string, inCharge: string}>(BACKEND_URL + "unmake/", {taskId: taskId, date: date, userId: userId})
+            .subscribe((responseData) => {
+                const updatedTasks = [...this.tasks];
+                const oldTaskIndex = updatedTasks.findIndex(t => t.id === taskId);
+                updatedTasks[oldTaskIndex].inCharge = responseData.inCharge;
+                this.tasks = updatedTasks
+                this.tasksUpdated.next([...this.tasks])
+                console.log('Task made!')
+            }
+        )
+    }
+
+    unmakeTaskInAdvance(taskId: string, userId: string) {
+        let date = new Date
+        this.http.post<{message: string, inAdvanceId: string}>(BACKEND_URL + "unmakeinadvance/", {taskId: taskId, date: date, userId: userId})
+            .subscribe((responseData) => {
+                const updatedTasks = [...this.tasks];
+                const oldTaskIndex = updatedTasks.findIndex(t => t.id === taskId);
+                const memberId = updatedTasks[oldTaskIndex].members.findIndex(member => member.userId == responseData.inAdvanceId)
+                updatedTasks[oldTaskIndex].members[memberId].madeInAdvance = false;
+                this.tasks = updatedTasks
+                this.tasksUpdated.next([...this.tasks])
+                console.log('Task made in advance was unmade!')
             }
         )
     }
