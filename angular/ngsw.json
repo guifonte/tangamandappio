@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1569297045021,
+  "timestamp": 1569471486720,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -10,8 +10,8 @@
       "urls": [
         "/favicon.ico",
         "/index.html",
-        "/main-es2015.28b34b3332676512e4fb.js",
-        "/main-es5.28b34b3332676512e4fb.js",
+        "/main-es2015.ce00838749bee2251138.js",
+        "/main-es5.ce00838749bee2251138.js",
         "/manifest.webmanifest",
         "/polyfills-es2015.fd917e7c3ed57f282ee5.js",
         "/polyfills-es5.f24fb8cb85b392c952f0.js",
@@ -32,8 +32,7 @@
         "/assets/icons/tanga-icon-256x256.png",
         "/assets/icons/tanga-icon-48x48.png",
         "/assets/icons/tanga-icon-512x512.png",
-        "/assets/icons/tanga-icon-96x96.png",
-        "/assets/manifest.json"
+        "/assets/icons/tanga-icon-96x96.png"
       ],
       "patterns": []
     }
@@ -47,12 +46,11 @@
     "/assets/icons/tanga-icon-48x48.png": "be0c192315a29647368a901d61a80158f8ccb933",
     "/assets/icons/tanga-icon-512x512.png": "dfb0c1b4d5a60ea5a1950469efc2f39ff995f99b",
     "/assets/icons/tanga-icon-96x96.png": "5dde3463aa1c7bffe1ea3329bf192214fcb62b8c",
-    "/assets/manifest.json": "4b669e026016a536fc4bf9873c248df25fc6feef",
     "/favicon.ico": "d12eb34734760071f8a65a20a804bf5e1c3c9a49",
-    "/index.html": "c0dbb314189bb0f407c4b84e874004cedf2d4d20",
-    "/main-es2015.28b34b3332676512e4fb.js": "78804e8bb6817e277908152150faf0228abf508f",
-    "/main-es5.28b34b3332676512e4fb.js": "580f4313802b30d18e1371c432e0db1809b15560",
-    "/manifest.webmanifest": "5f4895d87729714bb5df5c128c5076922b1d3a83",
+    "/index.html": "ca3ecaaa21e1c526ad8477c3dbe82c1c59cc36f4",
+    "/main-es2015.ce00838749bee2251138.js": "adf4ccecd6b0a37521e7b7757f3a1e3a6ab3d547",
+    "/main-es5.ce00838749bee2251138.js": "b1d7b58324531449fbed176d0c57d4192d36db8f",
+    "/manifest.webmanifest": "b62bad5aa3ad8d41a1a5a7fbc2b9f006cb054225",
     "/polyfills-es2015.fd917e7c3ed57f282ee5.js": "e2f28c3743afd2899e140ad831df9675c233c02b",
     "/polyfills-es5.f24fb8cb85b392c952f0.js": "9ab1ff82f0d4de8ea99a7c18fa536116b571683e",
     "/runtime-es2015.24b02acc1f369d9b9f37.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
