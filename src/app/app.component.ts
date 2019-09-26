@@ -27,7 +27,24 @@ export class AppComponent implements OnInit {
         }
       });
     }
-
+    if ('Notification' in window) {
+      this.askForNotificationPermission()
+    }
     this.authService.autoAuthUser();
+  }
+
+  askForNotificationPermission() {
+    Notification.requestPermission(result => {
+      console.log('User Choice', result);
+      if (result !== 'granted') {
+        console.log('No notification permission granted!');
+      } else {
+        this.displayConfirmNotification();
+      }
+    });  
+  }
+
+  displayConfirmNotification() {
+    new Notification('Boa! Agora você será avisado sobre as tarefas da casa!');
   }
 }
