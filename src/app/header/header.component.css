@@ -10,7 +10,20 @@ a {
 }
 
 ul {
-    display: flex;
+    display: none;
+}
+
+.nav-button{
+    display: block
+}
+
+@media (min-width: 600px) {
+    ul {
+        display: flex;
+    }
+    .nav-button{
+        display: none
+    }
 }
 
 .spacer {
@@ -35,3 +48,22 @@ button {
     margin: 1rem;
     color: gray;
 }
+
+mat-sidenav-content {
+    width: 95%;
+    margin: 1rem auto;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-sidenav-container {
+    position: inherit; height: 100%; display: inherit; transform: inherit;
+} 

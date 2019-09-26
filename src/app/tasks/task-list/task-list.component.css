@@ -20,14 +20,21 @@ mat-spinner {
 }
 
 button{
-    margin-right: 1rem;
+    margin-right: 1px;
     height: 70%;
+    font-size: 12px;
 }
 
 .member-card{
-    width: 80%;
+    width: 100%;
     text-align: left;
     display: flex;
+    font-size: 12px;
+    bottom: 1rem;
+}
+
+mat-expansion-panel-header{
+    font-size: 12px;
 }
 
 .in-charge{

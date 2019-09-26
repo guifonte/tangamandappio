@@ -109,6 +109,8 @@ THE SOFTWARE.
 
 @angular/material/progress-spinner
 
+@angular/material/sidenav
+
 @angular/material/table
 
 @angular/material/toolbar

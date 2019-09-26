@@ -31,6 +31,38 @@
                 <mat-divider></mat-divider>
                 <button mat-menu-item (click)="onLogout()" class="menu-item">Sair</button>
             </mat-menu>
+            
         </li>
     </ul>
+    <button mat-icon-button class="nav-button" (click)="sidenav.toggle()"><mat-icon>menu</mat-icon></button>  
 </mat-toolbar>
+<body>
+    <mat-sidenav-container >
+        <mat-sidenav #sidenav mode="over" position="end">
+            <mat-nav-list>
+                <ng-container *ngIf="!userIsAuthenticated">
+                    <a mat-list-item routerLink="/login" routerLinkActive="mat-accent">Entrar</a>
+                    <a mat-list-item routerLink="/signup" routerLinkActive="mat-accent">Registrar</a>
+                </ng-container>
+                <ng-container *ngIf="userIsAuthenticated && userIsAdmin">
+                    <a mat-list-item routerLink="/tasks/create" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Criar Tarefa</a>
+                    <a mat-list-item routerLink="/users" routerLinkActive="adminStyleMode" class="menu-item" *ngIf="adminMode">Usuários</a>
+                    <mat-divider *ngIf="adminMode"></mat-divider>
+                    <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="!adminMode" >Ligar Modo Admin</button>
+                    <button mat-menu-item (click)="onToggleAdminMode()" class="menu-item" *ngIf="adminMode">Desligar Modo Admin</button>
+                    <mat-divider></mat-divider>
+                </ng-container>
+                <ng-container *ngIf="userIsAuthenticated">
+                    <p class="email-span">{{ userEmail }}</p>
+                    <button mat-menu-item class="menu-item" routerLinkActive="adminStyleMode" [routerLink]="['/user/edit', userId]">Configurações da Conta</button>
+                    <button mat-menu-item (click)="onLogout()" class="menu-item">Sair</button>
+                </ng-container>
+                
+            </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content role="main">
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</body>
+
